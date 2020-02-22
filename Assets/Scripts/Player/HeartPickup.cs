@@ -5,28 +5,22 @@ using UnityEngine;
 public class HeartPickup : PowerUp
 {
     public FloatValue playerHealth;
+    public FloatValue heartContainers;
     public float healingAmount = 1f;
     [SerializeField] private EventSystem evenement;
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private bool hasBeenUsed = false;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.CompareTag("Player") && !other.isTrigger)
+        if(!hasBeenUsed && other.CompareTag("Player") && !other.isTrigger)
         {
+            hasBeenUsed = true;
             playerHealth.runTimeValue += healingAmount;
+            playerHealth.runTimeValue = Mathf.Clamp(playerHealth.runTimeValue, 0, heartContainers.runTimeValue * 2);
             evenement.TriggerHealthUpdate();
 
-            this.gameObject.SetActive(false);
+
+            Destroy(this.gameObject, 0.1f);
 
         }
     }
